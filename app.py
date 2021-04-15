@@ -1,14 +1,32 @@
 import streamlit as st
-import pandas as pd 
 
-df = pd.read_excel('Employees_data.xlsx')
+from sqlalchemy.orm import seesionmaker
+from sqlalchemy import create_engine
+import pandas as pd
+from database import Report
 
-st.title('Analysis of Covid-19 Vaccination Progress')
-st.markdown('![alt text](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMxgsjlbZ2BNCv_OD_YrNAe3GNU6Bs79xtCg&usqp=CAU)')
+engine = create_engine('sqlite:///db.sqlite3')
+Session = sessionmaker(bind=engine)
+sess = Session()
 
-st.dataframe(df) 
+st.title('Analysis of covid 19 vaccination progress')
+sidebar = st.sidebar()
 
-sidebar = st.sidebar
+def viewform():
+    title = st.text_input("Report Title")
+    desc = st.text_area('Report description')
+    btn =st.button("sumbit")
+    if btn:
+        report1 = Reeport(Title = title, desc = desc, date = "")
+        sess.add(report1)
+        sess.commit()
+        st.success('Report Saved')
 
-sidebar.header('Choose Your Action')
+sidebar.header('choose your option')
+options = ['view database','Analyse','view report']
+sidebar.selectbox(options = options, label="Choose Action")
 
+if choice == options[1]:
+    viewform()
+    
+    
