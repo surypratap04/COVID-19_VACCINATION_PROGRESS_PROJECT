@@ -17,7 +17,7 @@ def viewform():
     desc = st.text_area('Report description')
     btn =st.button("sumbit")
     if btn:
-        report1 = Reeport(Title = title, desc = desc, date = "")
+        report1 = Report(Title = title, desc = desc, date = "")
         sess.add(report1)
         sess.commit()
         st.success('Report Saved')
