@@ -39,6 +39,14 @@ def analyseManufacturers():
     data = analysis_mnf.getMnfCount()
     st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
 
+def countrywiseAnalysis():
+    st.header('Vaccine Manufacturers per hundred')
+
+    analysis_mnf = Analyse("datasets\country.csv")
+    data = analysis_mnf.getTopVaccPerHundred()
+    st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
+
+
 def viewReport():
     reports = sess.query(Report).all()
     titlesList = [ report.title for report in reports ]
@@ -55,7 +63,7 @@ def viewReport():
     st.markdown(markdown)
 
 sidebar.header('Choose Your Option')
-options = [ 'View Database', 'Analyse', 'View Report' ]
+options = [ 'View Database', 'Analyse','Analyse Country', 'View Report' ]
 choice = sidebar.selectbox( options = options, label="Choose Action" )
 
 if choice == options[0]:
@@ -63,4 +71,4 @@ if choice == options[0]:
 if choice == options[1]:
     analyseManufacturers()
 elif choice == options[2]:
-    pass
+    countrywiseAnalysis()

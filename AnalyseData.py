@@ -14,3 +14,6 @@ class Analyse:
 
     def getMnfCount(self):
         return self.df.groupby('vaccine').count()['location']
+
+    def getTopVaccPerHundred(self):
+        return self.df.groupby('country').mean().sort_values('total_vaccinations_per_hundred', ascending = False)['total_vaccinations_per_hundred'][:100]
