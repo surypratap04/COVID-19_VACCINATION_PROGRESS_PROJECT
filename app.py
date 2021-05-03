@@ -4,12 +4,15 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import pandas as pd
 from database import Report
-from visualization import plot, plotBar
+from visualization import *
 from AnalyseData import Analyse
 
 engine = create_engine('sqlite:///db.sqlite3')
 Session = sessionmaker(bind=engine)
 sess = Session()
+
+analysis_mnf = Analyse("datasets\manufacturer.csv")
+analysis_cnt = Analyse("datasets\country.csv")
 
 st.title('Analysis of World Covid-19 Vaccination Progress')
 sidebar = st.sidebar
@@ -35,14 +38,25 @@ def analyseManufacturers():
 
     st.header('Vaccine Manufacturers Total Count')
 
-    analysis_mnf = Analyse("datasets\manufacturer.csv")
     data = analysis_mnf.getMnfCount()
     st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
+
+    st.header('Timeline of Manufacturer Vaccinations')
+    iso_6 = ['CHN','IND','USA','IDN','PAK','BRA']
+    dfs = []
+    for i in iso_6:
+        dfs.append(analysis_cnt.getCountryData(i))
+    sel_con = st.selectbox(options = ['India', 'United States', 'China', 'Indonasia'], label="Select Country")
+    vac_Ind = analysis_mnf.get_vac_data(sel_con)
+    st.dataframe(analysis_mnf.get_vac_data(sel_con))
+    st.plotly_chart(plotLine(vac_Ind, 'date', 'total_vaccinations', 'vaccine',  'title'))
+
+    st.header('Vacinnation in Countries')
+    st.plotly_chart(plotScatter(dfs, ['date'], ['daily_vaccinations'], 6, iso_6, 'title', 'xlabel', 'ylabel'))
 
 def countrywiseAnalysis():
     st.header('Vaccine Manufacturers per hundred')
 
-    analysis_mnf = Analyse("datasets\country.csv")
     data = analysis_mnf.getTopVaccPerHundred()
     st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
 
@@ -63,7 +77,7 @@ def viewReport():
     st.markdown(markdown)
 
 sidebar.header('Choose Your Option')
-options = [ 'View Database', 'Analyse','Analyse Country', 'View Report' ]
+options = [ 'View Database', 'Analyse Manufacturers','Analyse Country', 'View Report' ]
 choice = sidebar.selectbox( options = options, label="Choose Action" )
 
 if choice == options[0]:

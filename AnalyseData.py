@@ -6,6 +6,9 @@ class Analyse:
         self.df = pd.read_csv(path)
         # self.cleanData()
 
+    def getDataframe(self):
+        return self.df
+
     def cleanData(self):
         self.df.drop(columns=[self.df.columns[0]], inplace=True)
 
@@ -17,3 +20,12 @@ class Analyse:
 
     def getTopVaccPerHundred(self):
         return self.df.groupby('country').mean().sort_values('total_vaccinations_per_hundred', ascending = False)['total_vaccinations_per_hundred'][:100]
+
+    def TimelineManufact(self):
+        return 
+
+    def getCountryData(self, iso):
+        return self.df.loc[(self.df['iso_code']==iso)]
+   
+    def get_vac_data(self, location):
+        return self.df[self.df['location']==location]

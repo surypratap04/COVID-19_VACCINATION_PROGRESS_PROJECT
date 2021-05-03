@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import plotly_express as px
 
 def plot():
     fig = go.Figure()
@@ -18,3 +19,21 @@ def plotBar(datapoint, title, xlabel, ylabel):
     fig.add_trace( go.Bar( x = datapoint.index , y = datapoint.values ) )
 
     return fig
+
+def plotScatter(datapoints, x, y, n, names, title, xlabel, ylabel):
+    fig = go.Figure()
+
+    layout = go.Layout(title= title,
+                    xaxis=dict(title=xlabel),
+                    yaxis=dict(title=ylabel))
+    fig = go.Figure(layout = layout)
+
+    for i in range(n):
+        fig.add_trace( go.Scatter(x=datapoints[i][x], y=datapoints[i][y],
+                    mode='lines',
+                    name=names[i]) )
+
+    return fig
+
+def plotLine(df, x, y, color, title):
+    return px.line(df, x = x, y = y, color =color, title = title )
