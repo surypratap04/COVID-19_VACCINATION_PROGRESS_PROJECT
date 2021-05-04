@@ -32,7 +32,13 @@ def viewForm():
         st.success('Report Saved')
 
 def viewDataset():
-    pass
+    st.header('Datasets used in this Analysis')
+    datasets = ['Country Data', 'Manufacturers Data']
+    selData = st.selectbox(options= datasets, label= 'Select Dataset to View')
+    if selData == datasets[0]:
+        st.dataframe(analysis_cnt.getDataframe())
+    elif selData == datasets[1]:
+        st.dataframe(analysis_mnf.getDataframe())
 
 def analyseManufacturers():
 
@@ -41,24 +47,41 @@ def analyseManufacturers():
     data = analysis_mnf.getMnfCount()
     st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
 
-    st.header('Timeline of Manufacturer Vaccinations')
-    iso_6 = ['CHN','IND','USA','IDN','PAK','BRA']
-    dfs = []
-    for i in iso_6:
-        dfs.append(analysis_cnt.getCountryData(i))
-    sel_con = st.selectbox(options = ['India', 'United States', 'China', 'Indonasia'], label="Select Country")
-    vac_Ind = analysis_mnf.get_vac_data(sel_con)
-    st.dataframe(analysis_mnf.get_vac_data(sel_con))
-    st.plotly_chart(plotLine(vac_Ind, 'date', 'total_vaccinations', 'vaccine',  'title'))
+    # st.header('Timeline of Manufacturer Vaccinations')
+    # iso_6 = ['CHN','IND','USA','IDN','PAK','BRA']
+    # dfs = []
+    # for i in iso_6:
+    #     dfs.append(analysis_cnt.getCountryData(i))
+    #     iso_6 = ['CHN','IND','USA','IDN','PAK','BRA']
 
-    st.header('Vacinnation in Countries')
-    st.plotly_chart(plotScatter(dfs, ['date'], ['daily_vaccinations'], 6, iso_6, 'title', 'xlabel', 'ylabel'))
+    # sel_con = st.selectbox(options = ['India', 'United States', 'China', 'Indonasia'], label="Select Country")
+    # vac_Ind = analysis_mnf.get_vac_data(sel_con)
+    # st.dataframe(analysis_mnf.getDataframe())
+    # st.plotly_chart(plotLine(vac_Ind, 'date', 'total_vaccinations', 'vaccine',  'title'))
+
+    # st.header('Vacinnation in Countries')
+    # st.plotly_chart(plotScatter(dfs, ['date'], ['daily_vaccinations'], 6, iso_6, 'title', 'xlabel', 'ylabel'))
+
+    st.header('Popular Vaccine Manufacturers')
+    st.image('plotImages/man_line.png')
+
 
 def countrywiseAnalysis():
-    st.header('Vaccine Manufacturers per hundred')
 
-    data = analysis_mnf.getTopVaccPerHundred()
-    st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
+    st.header('Daily Vaccinations in Countries')
+    st.image('plotImages/daily_vacc_line.png')
+
+    st.header('Fully Vaccinated Peoples in Countries')
+    st.image('plotImages/fully_vacc_line.png')
+
+    st.header('No. of Vaccinated People in Countries')
+    st.image('plotImages/people_vacc_line.png')
+
+    st.header('Total Vaccinations done in Countries')
+    st.image('plotImages/total_vacc_line.png')
+
+    st.header('Vaccination done per 100 in Countries')
+    st.image('plotImages/total_per100_line.png')
 
 
 def viewReport():
@@ -77,7 +100,7 @@ def viewReport():
     st.markdown(markdown)
 
 sidebar.header('Choose Your Option')
-options = [ 'View Database', 'Analyse Manufacturers','Analyse Country', 'View Report' ]
+options = [ 'View Dataset', 'Analyse Manufacturers','Analyse Country', 'View Report' ]
 choice = sidebar.selectbox( options = options, label="Choose Action" )
 
 if choice == options[0]:
