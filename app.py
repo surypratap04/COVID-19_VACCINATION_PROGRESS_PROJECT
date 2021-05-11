@@ -11,41 +11,63 @@ engine = create_engine('sqlite:///db.sqlite3')
 Session = sessionmaker(bind=engine)
 sess = Session()
 
-analysis_mnf = Analyse("datasets\manufacturer.csv")
-analysis_cnt = Analyse("datasets\country.csv")
-
 st.title('Analysis of World Covid-19 Vaccination Progress')
+st.text("")
+st.text("")
+st.image("logo.jfif")
+st.markdown("---")
 sidebar = st.sidebar
+sidebar.title('Analysis of World Covid-19 Vaccination Progress')
 
-def viewForm():
-
-    st.plotly_chart(plot())
-
-    title = st.text_input("Report Title")
-    desc = st.text_area('Report Description')
-    btn = st.button("Submit")
-
-    if btn:
-        report1 = Report(title = title, desc = desc, data = "")
-        sess.add(report1)
-        sess.commit()
-        st.success('Report Saved')
 
 def viewDataset():
-    st.header('Datasets used in this Analysis')
+    st.header('Data Used in Project')
     datasets = ['Country Data', 'Manufacturers Data']
-    selData = st.selectbox(options= datasets, label= 'Select Dataset to View')
+    selData = st.selectbox(options=datasets, label='Select Dataset to View')
     if selData == datasets[0]:
-        st.dataframe(analysis_cnt.getDataframe())
+        dataframe = analysis_cnt.getDataframe()
+        showDetails(dataframe)
     elif selData == datasets[1]:
-        st.dataframe(analysis_mnf.getDataframe())
+        dataframe = analysis_mnf.getDataframe()
+        showDetails(dataframe)
+
+
+def showDetails(dataframe):
+    with st.spinner("Loading Data..."):
+        st.dataframe(dataframe[:5000])
+
+        st.markdown('---')
+        cols = st.beta_columns(4)
+        cols[0].markdown("### No. of Rows :")
+        cols[1].markdown(f"# {dataframe.shape[0]}")
+        cols[2].markdown("### No. of Columns :")
+        cols[3].markdown(f"# {dataframe.shape[1]}")
+        st.markdown('---')
+
+        st.header('Summary')
+        st.dataframe(dataframe.describe())
+        st.markdown('---')
+
+        types = {'object': 'Categorical',
+                 'int64': 'Numerical', 'float64': 'Numerical'}
+        types = list(map(lambda t: types[str(t)], dataframe.dtypes))
+        st.header('Dataset Columns')
+        for col, t in zip(dataframe.columns, types):
+            st.markdown(f"### {col}")
+            cols = st.beta_columns(4)
+            cols[0].markdown('#### Unique Values :')
+            cols[1].markdown(f"# {dataframe[col].unique().size}")
+            cols[2].markdown('#### Type :')
+            cols[3].markdown(f"## {t}")
+
 
 def analyseManufacturers():
 
     st.header('Vaccine Manufacturers Total Count')
 
     data = analysis_mnf.getMnfCount()
-    st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers", "No. of Vaccinations", "Manufacturer"))
+    st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers",
+                            "No. of Vaccinations", "Manufacturer"))
 
     # st.header('Timeline of Manufacturer Vaccinations')
     # iso_6 = ['CHN','IND','USA','IDN','PAK','BRA']
@@ -68,6 +90,21 @@ def analyseManufacturers():
 
 def countrywiseAnalysis():
 
+    st.header('Top 20 Countries with Most Vaccinations')
+    data = analysis_cnt.getCountryVaccinations()
+    st.plotly_chart(plotBarh(data, 'title',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.header('Top 20 Countries with Most People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated()
+    st.plotly_chart(plotBarh(data, 'title',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.header('Top 20 Countries with Most Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated()
+    st.plotly_chart(plotBarh(data, 'title',
+                             'Country Name', 'No. of Vaccinations'))
+
     st.header('Daily Vaccinations in Countries')
     st.image('plotImages/daily_vacc_line.png')
 
@@ -86,10 +123,10 @@ def countrywiseAnalysis():
 
 def viewReport():
     reports = sess.query(Report).all()
-    titlesList = [ report.title for report in reports ]
-    selReport = st.selectbox(options = titlesList, label="Select Report")
-    
-    reportToView = sess.query(Report).filter_by(title = selReport).first()
+    titlesList = [report.title for report in reports]
+    selReport = st.selectbox(options=titlesList, label="Select Report")
+
+    reportToView = sess.query(Report).filter_by(title=selReport).first()
 
     markdown = f"""
         ## {reportToView.title}
@@ -99,13 +136,19 @@ def viewReport():
 
     st.markdown(markdown)
 
-sidebar.header('Choose Your Option')
-options = [ 'View Dataset', 'Analyse Manufacturers','Analyse Country', 'View Report' ]
-choice = sidebar.selectbox( options = options, label="Choose Action" )
 
-if choice == options[0]:
-    viewDataset()
-if choice == options[1]:
-    analyseManufacturers()
-elif choice == options[2]:
-    countrywiseAnalysis()
+sidebar.header('Choose Your Option')
+options = ['View Dataset', 'Analyse Manufacturers',
+           'Analyse Country', 'View Report']
+choice = sidebar.selectbox(options=options, label="Choose Action")
+
+with st.spinner("Please Wait for Some Time..."):
+    analysis_mnf = Analyse("datasets\manufacturer.csv")
+    analysis_cnt = Analyse("datasets\country.csv")
+
+    if choice == options[0]:
+        viewDataset()
+    if choice == options[1]:
+        analyseManufacturers()
+    elif choice == options[2]:
+        countrywiseAnalysis()
