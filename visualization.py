@@ -57,3 +57,19 @@ def plotScatter(datapoints, x, y, n, names, title, xlabel, ylabel):
 
 def plotLine(df, x, y, color, title):
     return px.line(df, x=x, y=y, color=color, title=title)
+
+
+def plotChloropeth(datapoints, title="default title", xlabel="default xlabel", ylabel="default ylabel"):
+
+    layout = go.Layout(title=title,
+                       xaxis=dict(title=xlabel),
+                       yaxis=dict(title=ylabel))
+
+    fig = go.Figure({
+        "type": 'choropleth',
+        "locations": datapoints.index,
+        "locationmode": 'country names',
+        "z": datapoints.values},
+        layout=layout)
+
+    return fig

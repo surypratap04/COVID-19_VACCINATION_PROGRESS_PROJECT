@@ -66,7 +66,7 @@ def analyseManufacturers():
     st.header('Vaccine Manufacturers Total Count')
 
     data = analysis_mnf.getMnfCount()
-    st.plotly_chart(plotBar(data, "Total Count of Vaccine Manufacturers",
+    st.plotly_chart(plotBar(data, "Pfizer is the most popular Vaccine Manufacturer",
                             "No. of Vaccinations", "Manufacturer"))
 
     # st.header('Timeline of Manufacturer Vaccinations')
@@ -84,26 +84,41 @@ def analyseManufacturers():
     # st.header('Vacinnation in Countries')
     # st.plotly_chart(plotScatter(dfs, ['date'], ['daily_vaccinations'], 6, iso_6, 'title', 'xlabel', 'ylabel'))
 
-    st.header('Popular Vaccine Manufacturers')
+    st.header('Increase in Vaccine Manufacturing over time')
     st.image('plotImages/man_line.png')
 
 
 def countrywiseAnalysis():
 
-    st.header('Top 20 Countries with Most Vaccinations')
+    st.header('Overall Total Vaccinations')
     data = analysis_cnt.getCountryVaccinations()
-    st.plotly_chart(plotBarh(data, 'title',
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations',
                              'Country Name', 'No. of Vaccinations'))
 
-    st.header('Top 20 Countries with Most People Vaccinated')
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries',
+                                   'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
     data = analysis_cnt.getPeopleVaccinated()
-    st.plotly_chart(plotBarh(data, 'title',
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated',
                              'Country Name', 'No. of Vaccinations'))
 
-    st.header('Top 20 Countries with Most Fully Vaccinated People')
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
     data = analysis_cnt.getPeopleFullyVaccinated()
-    st.plotly_chart(plotBarh(data, 'title',
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People',
                              'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
 
     st.header('Daily Vaccinations in Countries')
     st.image('plotImages/daily_vacc_line.png')

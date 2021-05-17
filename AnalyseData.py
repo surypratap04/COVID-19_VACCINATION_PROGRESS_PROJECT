@@ -5,7 +5,7 @@ class Analyse:
 
     def __init__(self, path):
         self.df = pd.read_csv(path)
-        self.df = self.df[:1000]
+        # self.df = self.df[:1000]
         if path == 'datasets\country.csv':
             self.df["Total_vaccinations(count)"] = self.df.groupby(
                 "country").total_vaccinations.tail(1)
@@ -40,10 +40,10 @@ class Analyse:
         return self.df[self.df['location'] == location]
 
     def getCountryVaccinations(self):
-        return self.df.groupby("country")["Total_vaccinations(count)"].mean().sort_values(ascending=False).head(20)
+        return self.df.groupby("country")["Total_vaccinations(count)"].mean().sort_values(ascending=False)
 
     def getPeopleVaccinated(self):
-        return self.df.groupby("country")["People_vaccinated(count)"].mean().sort_values(ascending=False).head(20)
+        return self.df.groupby("country")["People_vaccinated(count)"].mean().sort_values(ascending=False)
 
     def getPeopleFullyVaccinated(self):
-        return self.df.groupby("country")["People_fully_vaccinated(count)"].mean().sort_values(ascending=False).head(20)
+        return self.df.groupby("country")["People_fully_vaccinated(count)"].mean().sort_values(ascending=False)
