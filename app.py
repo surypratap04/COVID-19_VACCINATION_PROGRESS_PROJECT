@@ -120,6 +120,37 @@ def countrywiseAnalysis():
         data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
     st.markdown("---")
 
+
+    st.header('Overall Total Vaccinations')
+    data = analysis_cnt.getCountryVaccinations_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries',
+                                   'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated_100()
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
     st.header('Daily Vaccinations in Countries')
     st.image('plotImages/daily_vacc_line.png')
 
@@ -136,25 +167,45 @@ def countrywiseAnalysis():
     st.image('plotImages/total_per100_line.png')
 
 
-def viewReport():
-    reports = sess.query(Report).all()
-    titlesList = [report.title for report in reports]
-    selReport = st.selectbox(options=titlesList, label="Select Report")
 
-    reportToView = sess.query(Report).filter_by(title=selReport).first()
+def vaccineAnalysis():
+    st.header('Country Vaccinations with respect to vaccine Manufacturer')
+    selVaccine = st.selectbox(options=analysis_cnt.getVaccines(), label="Choose vaccine to continue")
 
-    markdown = f"""
-        ## {reportToView.title}
-        ### {reportToView.desc}
-        
-    """
+    st.header('Overall Total Vaccinations')
+    data = analysis_cnt.getCountryVaccinations_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 countries with most Vaccinations',
+                             'Country Name', 'No. of Vaccinations'))
 
-    st.markdown(markdown)
+    st.text("")
+    st.plotly_chart(plotChloropeth(data, 'Total Vaccination in world countries',
+                                   'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total People Vaccinated')
+    data = analysis_cnt.getPeopleVaccinated_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most People Vaccinated',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
+
+    st.header('Total Fully Vaccinated People')
+    data = analysis_cnt.getPeopleFullyVaccinated_vaccine(selVaccine)
+    st.plotly_chart(plotBarh(data.head(20), 'Top 20 Countries with Most Fully Vaccinated People',
+                             'Country Name', 'No. of Vaccinations'))
+
+    st.text("")
+    st.plotly_chart(plotChloropeth(
+        data, 'Total people fully Vaccinated in world countries', 'Country Name', 'No. of Vaccinations'))
+    st.markdown("---")
 
 
 sidebar.header('Choose Your Option')
 options = ['View Dataset', 'Analyse Manufacturers',
-           'Analyse Country', 'View Report']
+           'Analyse Country', 'Analyse Country By Vaccine']
 choice = sidebar.selectbox(options=options, label="Choose Action")
 
 with st.spinner("Please Wait for Some Time..."):
@@ -163,7 +214,9 @@ with st.spinner("Please Wait for Some Time..."):
 
     if choice == options[0]:
         viewDataset()
-    if choice == options[1]:
+    elif choice == options[1]:
         analyseManufacturers()
     elif choice == options[2]:
         countrywiseAnalysis()
+    elif choice == options[3]:
+        vaccineAnalysis()

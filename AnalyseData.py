@@ -13,6 +13,12 @@ class Analyse:
                 "country").people_vaccinated.tail(1)
             self.df["People_fully_vaccinated(count)"] = self.df.groupby(
                 "country").people_fully_vaccinated.tail(1)
+            self.df["Total_vaccinations(count)_per_hundred"] = self.df.groupby(
+                "country").total_vaccinations_per_hundred.tail(1)
+            self.df["People_vaccinated(count)_per_hundred"] = self.df.groupby(
+                "country").people_vaccinated_per_hundred.tail(1)
+            self.df["People_fully_vaccinated(count)_per_hundred"] = self.df.groupby(
+                "country").people_fully_vaccinated_per_hundred.tail(1)
         # self.cleanData()
 
     def getDataframe(self):
@@ -47,3 +53,26 @@ class Analyse:
 
     def getPeopleFullyVaccinated(self):
         return self.df.groupby("country")["People_fully_vaccinated(count)"].mean().sort_values(ascending=False)
+
+
+    def getCountryVaccinations_100(self):
+        return self.df.groupby("country")["Total_vaccinations(count)_per_hundred"].mean().sort_values(ascending=False)
+
+    def getPeopleVaccinated_100(self):
+        return self.df.groupby("country")["People_vaccinated(count)_per_hundred"].mean().sort_values(ascending=False)
+
+    def getPeopleFullyVaccinated_100(self):
+        return self.df.groupby("country")["People_fully_vaccinated(count)_per_hundred"].mean().sort_values(ascending=False)
+
+
+    def getCountryVaccinations_vaccine(self, vaccine):
+        return self.df[self.df['vaccines'] == vaccine].groupby("country")["Total_vaccinations(count)"].mean().sort_values(ascending=False)
+
+    def getPeopleVaccinated_vaccine(self, vaccine):
+        return self.df[self.df['vaccines'] == vaccine].groupby("country")["People_vaccinated(count)"].mean().sort_values(ascending=False)
+
+    def getPeopleFullyVaccinated_vaccine(self, vaccine):
+        return self.df[self.df['vaccines'] == vaccine].groupby("country")["People_fully_vaccinated(count)"].mean().sort_values(ascending=False)
+
+    def getVaccines(self):
+        return self.df.vaccines.unique()
